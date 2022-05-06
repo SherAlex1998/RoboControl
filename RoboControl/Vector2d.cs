@@ -51,14 +51,19 @@ namespace Vector
             return new Vector2d(rightValue.X * arg, rightValue.Y * arg);
         }
 
-        public static bool operator >(Vector2d rightValue, double arg)
+        public static Vector2d operator /(Vector2d rightValue, double arg)
         {
-            return rightValue.X > arg & rightValue.Y > arg;
+            return new Vector2d(rightValue.X / arg, rightValue.Y / arg);
         }
 
-        public static bool operator <(Vector2d rightValue, double arg)
+        public static bool operator >(Vector2d rightValue, Vector2d leftValue)
         {
-            return rightValue.X < arg & rightValue.Y < arg;
+            return leftValue.Magnitude() > rightValue.Magnitude(); 
+        }
+
+        public static bool operator <(Vector2d rightValue, Vector2d leftValue)
+        {
+            return leftValue.Magnitude() < rightValue.Magnitude();
         }
 
         override public string ToString()

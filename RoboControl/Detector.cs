@@ -77,7 +77,8 @@ namespace RoboControl
                 Mat input = DnnInvoke.BlobFromImage(inputImage, 1 / 255.0, swapRB: true);
                 model.SetInput(input);
                 model.SetPreferableBackend(Emgu.CV.Dnn.Backend.OpenCV);
-                model.SetPreferableTarget(Target.OpenCL);
+                //model.SetPreferableTarget(Target.OpenCL);
+                model.SetPreferableTarget(Target.Cpu);
 
                 VectorOfMat vectorOfMat = new VectorOfMat();
                 model.Forward(vectorOfMat, model.UnconnectedOutLayersNames);

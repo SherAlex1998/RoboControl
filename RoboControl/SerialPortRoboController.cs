@@ -17,10 +17,12 @@ namespace RoboControl
         private Vector2d boundCoords;
         private Vector2d boundVector;
         private double lengthOfBoundVector;
+        private int liftValue;
 
         private int calibrationConstant;
 
         private bool isUp;
+        private bool isOpen;
 
         public Vector2d RobotCoords { get => robotCoords; set => robotCoords = value; }
         public Vector2d BoundCoords 
@@ -35,17 +37,22 @@ namespace RoboControl
         }
 
         public bool IsUp { get => isUp; }
+        public bool IsOpen { get => isOpen; set => isOpen = value; }
 
         public SerialPortRoboController(string portName)
         {
             isUp = true;
+            isOpen = false;
             port = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One);
             robotCoords = new Vector2d(0, 0);
             BoundCoords = new Vector2d(0, 0);
             calibrationConstant = 130;
+            liftValue = 60;
             OpenPort();
+            CloseGrab();
             StretchMin();
             TurnHorizontalDefault();
+            GetUp();
         }
 
         public void MooveTo(Point point)
@@ -120,35 +127,68 @@ namespace RoboControl
             Debug.Print(command);
         }
 
+        public void Lift(int delta)
+        {
+            if (delta > 0)
+            {
+                liftValue += 2;
+                liftValue = Math.Clamp(liftValue, 50, 110);
+            }
+            else
+            {
+                liftValue -= 2;
+                liftValue = Math.Clamp(liftValue, 50, 110);
+            }
+            string command = "l" + liftValue.ToString() + "n";
+            Debug.Print(command);
+            port.Write(command);
+        }
+
         public void GetDown()
         {
             isUp = false;
-            port.Write("l1");
-            Debug.Print("l1");
+            port.Write("l60");
+            Debug.Print("l60");
         }
 
         public void GetUp()
         {
             isUp = true;
-            port.Write("l0");
-            Debug.Print("l0");
+            port.Write("l100");
+            Debug.Print("l100");
+        }
+
+        public void OpenGrab()
+        {
+            string command = "o";
+            Debug.Print(command);
+            port.Write(command);
+            isOpen = true;
+        }
+
+        public void CloseGrab()
+        {
+            string command = "c";
+            Debug.Print(command);
+            port.Write(command);
+            isOpen = false;
         }
 
         public void StretchMax()
         {
-            port.Write("r90n");
-            Debug.Print("r90n");
+            port.Write("r90");
+            Debug.Print("r90");
         }
 
         public void StretchMin()
         {
-            port.Write("r20n");
-            Debug.Print("r20n");
+            port.Write("r20");
+            Debug.Print("r20");
         }
 
         public void TurnHorizontalDefault()
         {
-            string command = "d90n";
+            string command = "d90";
             port.Write(command);
         }
     }

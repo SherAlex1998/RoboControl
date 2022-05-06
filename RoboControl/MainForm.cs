@@ -58,11 +58,34 @@ namespace RoboControl
             detector = new Detector();
             isDetectionModeOn = false;
             confidenceTrashHoldTextBox.Text = "10%";
+            MouseWheel += new MouseEventHandler(MouseWheel_event);
+            KeyDown += new KeyEventHandler(SpaceKeyDownEvent);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        void MouseWheel_event(object sender, MouseEventArgs e)
+        {
+            if (roboController != null)
+            {
+                roboController.Lift(e.Delta);
+            }
+        }
+
+        void SpaceKeyDownEvent(object sender, KeyEventArgs e)
+        {
+            Debug.Print("Space pressed!");
+            if (roboController != null)
+            {
+                if (e.KeyCode == Keys.Space)
+                {
+                    if (roboController.IsOpen) roboController.CloseGrab();
+                    else roboController.OpenGrab();
+                }
+            }
         }
 
         private void serialPortNamesComboBox_DropDown(object sender, EventArgs e)
