@@ -33,7 +33,7 @@ namespace Vector
 
         public bool IsNull()
         {
-            if (x == 0 & y == 0) return true; else return false;
+            if (x == 0 && y == 0) return true; else return false;
         }
 
         public static Vector2d operator + (Vector2d rightValue, Vector2d leftValue)

@@ -39,6 +39,12 @@ namespace RoboControl
             this.horizaontalAngleDebug = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.calibrationButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.takeItems = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.manipulatorComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.mainVideoBox = new System.Windows.Forms.PictureBox();
             this.videoBoxPanel = new System.Windows.Forms.Panel();
             this.videoBoxToolStrip = new System.Windows.Forms.ToolStrip();
@@ -94,8 +100,6 @@ namespace RoboControl
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.confidenceTrashHoldLabel = new System.Windows.Forms.ToolStripLabel();
             this.confidenceTrashHoldTextBox = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
-            this.takeItems = new System.Windows.Forms.ToolStripButton();
             this.RobotRelatedToolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainVideoBox)).BeginInit();
             this.videoBoxPanel.SuspendLayout();
@@ -115,7 +119,11 @@ namespace RoboControl
             this.toolStripSeparator8,
             this.calibrationButton,
             this.toolStripSeparator15,
-            this.takeItems});
+            this.takeItems,
+            this.toolStripButton1,
+            this.toolStripSeparator16,
+            this.toolStripLabel1,
+            this.manipulatorComboBox});
             this.RobotRelatedToolStrip.Location = new System.Drawing.Point(0, 0);
             this.RobotRelatedToolStrip.Name = "RobotRelatedToolStrip";
             this.RobotRelatedToolStrip.Size = new System.Drawing.Size(1222, 25);
@@ -163,6 +171,51 @@ namespace RoboControl
             this.calibrationButton.Size = new System.Drawing.Size(118, 22);
             this.calibrationButton.Text = "&Начать калибровку";
             this.calibrationButton.Click += new System.EventHandler(this.calibrationButton_Click);
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(6, 25);
+            // 
+            // takeItems
+            // 
+            this.takeItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.takeItems.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(64)))), ((int)(((byte)(77)))));
+            this.takeItems.Image = ((System.Drawing.Image)(resources.GetObject("takeItems.Image")));
+            this.takeItems.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.takeItems.Name = "takeItems";
+            this.takeItems.Size = new System.Drawing.Size(129, 22);
+            this.takeItems.Text = "Подобрать предметы";
+            this.takeItems.Click += new System.EventHandler(this.TakeItems_Click);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(161, 22);
+            this.toolStripButton1.Text = "Управлять по координатам";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripSeparator16
+            // 
+            this.toolStripSeparator16.Name = "toolStripSeparator16";
+            this.toolStripSeparator16.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(131, 22);
+            this.toolStripLabel1.Text = "Выбрать манипулятор";
+            // 
+            // manipulatorComboBox
+            // 
+            this.manipulatorComboBox.Items.AddRange(new object[] {
+            "4 оси",
+            "6 осей"});
+            this.manipulatorComboBox.Name = "manipulatorComboBox";
+            this.manipulatorComboBox.Size = new System.Drawing.Size(121, 25);
             // 
             // mainVideoBox
             // 
@@ -636,22 +689,6 @@ namespace RoboControl
             this.confidenceTrashHoldTextBox.Name = "confidenceTrashHoldTextBox";
             this.confidenceTrashHoldTextBox.Size = new System.Drawing.Size(100, 25);
             // 
-            // toolStripSeparator15
-            // 
-            this.toolStripSeparator15.Name = "toolStripSeparator15";
-            this.toolStripSeparator15.Size = new System.Drawing.Size(6, 25);
-            // 
-            // takeItems
-            // 
-            this.takeItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.takeItems.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(47)))), ((int)(((byte)(64)))), ((int)(((byte)(77)))));
-            this.takeItems.Image = ((System.Drawing.Image)(resources.GetObject("takeItems.Image")));
-            this.takeItems.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.takeItems.Name = "takeItems";
-            this.takeItems.Size = new System.Drawing.Size(129, 22);
-            this.takeItems.Text = "Подобрать предметы";
-            this.takeItems.Click += new System.EventHandler(this.TakeItems_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -746,6 +783,10 @@ namespace RoboControl
         private System.Windows.Forms.ToolStripTextBox confidenceTrashHoldTextBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
         private System.Windows.Forms.ToolStripButton takeItems;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripComboBox manipulatorComboBox;
     }
 }
 

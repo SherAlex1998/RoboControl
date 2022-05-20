@@ -40,6 +40,7 @@ namespace RoboControl
         private Vector2d boundCoords;
         private Mat frame;
         private SerialPortRoboController roboController;
+        private SerialPort6RoboController roboController6;
         private List<DetectedObject> currentDetections;
 
         private bool isDetectionModeOn;
@@ -60,6 +61,7 @@ namespace RoboControl
             confidenceTrashHoldTextBox.Text = "10%";
             MouseWheel += new MouseEventHandler(MouseWheel_event);
             KeyDown += new KeyEventHandler(SpaceKeyDownEvent);
+            manipulatorComboBox.SelectedItem = manipulatorComboBox.Items[0];
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -73,6 +75,10 @@ namespace RoboControl
             {
                 roboController.Lift(e.Delta);
             }
+            if (roboController6 != null)
+            {
+                roboController6.Lift(e.Delta);
+            }
         }
 
         void SpaceKeyDownEvent(object sender, KeyEventArgs e)
@@ -84,6 +90,14 @@ namespace RoboControl
                 {
                     if (roboController.IsOpen) roboController.CloseGrab();
                     else roboController.OpenGrab();
+                }
+            }
+            if (roboController6 != null)
+            {
+                if (e.KeyCode == Keys.Space)
+                {
+                    if (roboController6.IsOpen) roboController6.CloseGrab();
+                    else roboController6.OpenGrab();
                 }
             }
         }
@@ -270,18 +284,34 @@ namespace RoboControl
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
             if (inCalibrationMode) return;
-            var direction = new Vector2d(e.Location.X, e.Location.Y);
-            //Debug.Print(direction.ToString());
-            coordsText.Text = e.Location.ToString();
-            int angle = -(int)Math.Round(Math.Atan2((direction.Y - robotCoords.Y), (direction.X - robotCoords.X)) * (180 / Math.PI));
-            string command = "d" + angle.ToString();
-            horizaontalAngleDebug.Text = command;
-            roboController?.TurnHorizontal(direction);
-            roboController?.Stretch(direction);
+            if (manipulatorComboBox.SelectedIndex == 0)
+            {
+                var direction = new Vector2d(e.Location.X, e.Location.Y);
+                //Debug.Print(direction.ToString());
+                coordsText.Text = e.Location.ToString();
+                int angle = -(int)Math.Round(Math.Atan2((direction.Y - robotCoords.Y), (direction.X - robotCoords.X)) * (180 / Math.PI));
+                string command = "d" + angle.ToString();
+                horizaontalAngleDebug.Text = command;
+                roboController?.TurnHorizontal(direction);
+                roboController?.Stretch(direction);
+            }
+            else
+            {
+                return;
+                //var direction = new Vector2d(e.Location.X, e.Location.Y);
+                //coordsText.Text = direction.ToString();
+                //roboController6?.MooveTo(direction);
+            }
         }
 
         private void mainVideoBox_MouseClick(object sender, MouseEventArgs e)
         {
+            if (roboController6 != null)
+            {
+                var direction = new Vector2d(e.Location.X, e.Location.Y);
+                coordsText.Text = direction.ToString();
+                roboController6?.MooveTo(direction);
+            }
             return;
             //roboController?.TurnHorizontal(e.Location);
         }
@@ -307,38 +337,74 @@ namespace RoboControl
 
             MessageBox.Show("Укажите местоположение робота", "Калибровка",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            roboController = new SerialPortRoboController(serialPortNamesComboBox.SelectedItem.ToString());
-            roboController.TurnHorizontalDefault();
-            roboController.StretchMin();
-            roboController.GetUp();
-            mainVideoBox.MouseClick -= mainVideoBox_MouseClick;
-            mainVideoBox.MouseClick += new MouseEventHandler(mainVideoBox_RobotCoordsPointer);
+            if (manipulatorComboBox.SelectedIndex == 0)
+            {
+                roboController = new SerialPortRoboController(serialPortNamesComboBox.SelectedItem.ToString());
+                roboController.TurnHorizontalDefault();
+                roboController.StretchMin();
+                roboController.GetUp();
+                mainVideoBox.MouseClick -= mainVideoBox_MouseClick;
+                mainVideoBox.MouseClick += new MouseEventHandler(mainVideoBox_RobotCoordsPointer);
+            }
+            else
+            {
+                roboController6 = new SerialPort6RoboController(serialPortNamesComboBox.SelectedItem.ToString(), 13.5f, 23f);
+                mainVideoBox.MouseClick -= mainVideoBox_MouseClick;
+                mainVideoBox.MouseClick += new MouseEventHandler(mainVideoBox_RobotCoordsPointer);
+            }
         }
 
         private void mainVideoBox_RobotCoordsPointer(object sender, MouseEventArgs e)
         {
-            robotCoords = new Vector2d(e.Location.X, e.Location.Y);
-            robotCoordsText.Text = robotCoords.ToString();
-            roboController.RobotCoords = robotCoords;
-            mainVideoBox.MouseClick -= mainVideoBox_RobotCoordsPointer;
-            mainVideoBox.MouseClick += new MouseEventHandler(mainVideoBox_BoundCoordsPointer);
-            roboController.StretchMax();
-            MessageBox.Show("Укажите на конец манипулятора, задав границу действия робота", "Калибровка",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (manipulatorComboBox.SelectedIndex == 0)
+            {
+                robotCoords = new Vector2d(e.Location.X, e.Location.Y);
+                robotCoordsText.Text = robotCoords.ToString();
+                roboController.RobotCoords = robotCoords;
+                mainVideoBox.MouseClick -= mainVideoBox_RobotCoordsPointer;
+                mainVideoBox.MouseClick += new MouseEventHandler(mainVideoBox_BoundCoordsPointer);
+                roboController.StretchMax();
+                MessageBox.Show("Укажите на конец манипулятора, задав границу действия робота", "Калибровка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                robotCoords = new Vector2d(e.Location.X, e.Location.Y);
+                roboController6.SetRobotCoords(robotCoords);
+                mainVideoBox.MouseClick -= mainVideoBox_RobotCoordsPointer;
+                mainVideoBox.MouseClick += new MouseEventHandler(mainVideoBox_BoundCoordsPointer);
+                MessageBox.Show("Укажите на расстояние в 20 см от манипулятора", "Калибровка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void mainVideoBox_BoundCoordsPointer(object sender, MouseEventArgs e)
         {
-            roboController.StretchMin();
-            boundCoords = new Vector2d(e.Location.X, e.Location.Y);
-            roboController.BoundCoords = boundCoords;
-            boundCoordsText.Text = boundCoords.ToString();
-            videoBoxPanel.BackColor = SystemColors.WindowFrame;
-            mainVideoBox.MouseClick -= mainVideoBox_BoundCoordsPointer;
-            mainVideoBox.MouseClick += new MouseEventHandler(mainVideoBox_MouseClick);
-            mainVideoBox.Cursor = Cursors.Default;
-            inCalibrationMode = false;
+            if (manipulatorComboBox.SelectedIndex == 0)
+            {
+                roboController.StretchMin();
+                boundCoords = new Vector2d(e.Location.X, e.Location.Y);
+                roboController.BoundCoords = boundCoords;
+                boundCoordsText.Text = boundCoords.ToString();
+                videoBoxPanel.BackColor = SystemColors.WindowFrame;
+                mainVideoBox.MouseClick -= mainVideoBox_BoundCoordsPointer;
+                mainVideoBox.MouseClick += new MouseEventHandler(mainVideoBox_MouseClick);
+                mainVideoBox.Cursor = Cursors.Default;
+                inCalibrationMode = false;
+            }
+            else
+            {
+                videoBoxPanel.BackColor = SystemColors.WindowFrame;
+                mainVideoBox.MouseClick -= mainVideoBox_BoundCoordsPointer;
+                mainVideoBox.MouseClick += new MouseEventHandler(mainVideoBox_MouseClick);
+                mainVideoBox.Cursor = Cursors.Default;
+                double coeff = new Vector2d(e.Location.X - robotCoords.X, e.Location.Y - robotCoords.Y).Magnitude() / 20;
+                Debug.Print("coeff" + coeff.ToString());
+                roboController6.SetScaleFactor(coeff);
+                inCalibrationMode = false;
+
+            }
+           
         }
 
         private void LoadModel_Click(object sender, EventArgs e)
@@ -492,6 +558,16 @@ namespace RoboControl
         {
             (sender as System.Windows.Forms.Timer).Stop();
             capture.Start();
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            ControlForm form;
+            if (serialPortNamesComboBox.SelectedItem == null)
+                form = new ControlForm(null);
+            else
+                form = new ControlForm(serialPortNamesComboBox.SelectedItem.ToString());
+            form.Show();
         }
     }
 }
