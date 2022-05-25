@@ -542,16 +542,43 @@ namespace RoboControl
 
         private async void TakeItems()
         {
-            Debug.Print(currentDetections[0].centre.ToString());
-            roboController?.MooveTo(currentDetections[0].centre.ToPoint());
-            int delay = 1000;
-            await Task.Delay(delay);
-            roboController?.GetDown();
-            await Task.Delay(delay);
-            //roboController.GetUp();
-            await Task.Delay(delay);
-            roboController?.MooveTo(new Point(140, 400));
-            await Task.Delay(delay);
+            int delay = 3000;
+            if (roboController6 != null)
+            {
+                Debug.Print(currentDetections[0].centre.ToString());
+                Vector3d point = new Vector3d(currentDetections[0].centre.X, currentDetections[0].centre.Y, 200);
+                roboController6?.MooveTo(point);
+                await Task.Delay(delay);
+                point = new Vector3d(currentDetections[0].centre.X, currentDetections[0].centre.Y, 50);
+                roboController6?.MooveTo(point);
+                await Task.Delay(delay);
+                point = new Vector3d(currentDetections[0].centre.X, currentDetections[0].centre.Y, 200);
+                roboController6?.MooveTo(point);
+                await Task.Delay(delay);
+                roboController6?.MooveTo(new Vector3d(140, 400, 200));
+                /*
+                await Task.Delay(delay);
+                point = new Vector3d(currentDetections[0].centre.X, currentDetections[0].centre.Y, 4);
+                roboController6?.MooveTo(point);
+                await Task.Delay(delay);
+                roboController6?.MooveTo(new Vector3d (140, 400, 5)); 
+                await Task.Delay(delay);
+                roboController6?.MooveTo(new Vector3d(140, 400, 10));
+                await Task.Delay(delay);
+                */
+            }
+            if (roboController != null)
+            {
+                Debug.Print(currentDetections[0].centre.ToString());
+                roboController?.MooveTo(currentDetections[0].centre.ToPoint());
+                await Task.Delay(delay);
+                roboController?.GetDown();
+                await Task.Delay(delay);
+                //roboController.GetUp();
+                await Task.Delay(delay);
+                roboController?.MooveTo(new Point(140, 400));
+                await Task.Delay(delay);
+            }
         }
 
         void t_Tick(object sender, EventArgs e)
